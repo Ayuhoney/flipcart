@@ -60,13 +60,13 @@ export const Cart = () => {
            
             navigator("/orders")
             window.location.reload();
+            localStorage.removeItem("cart")
         }
         catch(e){
             console.log(`error ${e}`);
         }
     }
    
-  
     return (
         <>
             {cartItems.length ? (
