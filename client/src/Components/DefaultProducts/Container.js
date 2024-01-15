@@ -43,8 +43,10 @@ const ProductContainer = (props) => {
                     fontWeight: "600",
                     fontSize: "20px"
                 }}>Deals of The Day</p>
-
-                <Button style={{ padding: "10px 15px", height: "auto" }} variant="contained">Continue</Button>
+                
+                <Link to="/">
+                <Button style={{ padding: "5px 15px", height: "auto" }} variant="contained">view</Button>
+                </Link>
             </div>
             <Carousel responsive={responsive} swipeable={false} draggable={false} infinite={true} autoPlay={true}>
 

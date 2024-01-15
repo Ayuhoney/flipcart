@@ -25,6 +25,7 @@ const Component = styled(ButtonGroup)`
 `;
 
 export const CartItem = ({ item }) => {
+    
     const cart = useSelector(state => state.cart);
     const selectedItem = cart.find(cartItem => cartItem.id === item.id);
     const dispatch = useDispatch();
@@ -46,6 +47,8 @@ export const CartItem = ({ item }) => {
             dispatch(decrementQuantity(id, selectedItem.quantity - 1));
         }
     };
+
+    
     return <div className="cart-item-container">
         <div className="img-button-container" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }} >
              

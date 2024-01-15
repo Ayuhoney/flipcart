@@ -10,7 +10,6 @@ import {Link} from 'react-router-dom'
 
 const Remove = styled(Button)(({ theme }) => ({
     fontSize: '16px',
-    display: 'flex',
     marginTop: '9%',
     [theme.breakpoints.down('sm')]: {
         marginTop: '-7%'
@@ -25,6 +24,7 @@ const Component = styled(ButtonGroup)`
 `;
 
 const WishlistItem = ({ item }) => {
+
     const cart = useSelector(state => state.wishlist);
     const selectedItem = cart.find(cartItem => cartItem.id === item.id);
     const dispatch = useDispatch();
@@ -49,17 +49,7 @@ const WishlistItem = ({ item }) => {
         dispatch({ type: 'UPDATE_ALL_ITEM_COSTS', payload: updatedItems });
     };
 
-    const incrementItemQuantity = (id) => {
-        dispatch(incrementQuantity(id, selectedItem.quantity + 1));
-        updateAllItemCosts(cart, dispatch);
-    };
-
-    const decrementItemQuantity = (id) => {
-        if (selectedItem.quantity > 1) {
-            dispatch(decrementQuantity(id, selectedItem.quantity - 1));
-            updateAllItemCosts(cart, dispatch);
-        }
-    };
+   
     return <div className="cart-item-container">
         <div className="img-button-container" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }} >
             <Link to={`/product/${selectedItem.id}`}>
@@ -67,11 +57,6 @@ const WishlistItem = ({ item }) => {
             </Link>
             <br />
 
-            <Component>
-                <Button onClick={() => decrementItemQuantity(item.id)} style={{ border: 'none' }} variant="contained" color="success">-</Button>
-                <Button style={{ border: 'none' }}>{selectedItem ? selectedItem.quantity : 0}</Button>
-                <Button onClick={() => incrementItemQuantity(item.id)} style={{ border: 'none' }} variant="contained" color="error">+</Button>
-            </Component>
 
         </div>
 
@@ -116,14 +101,13 @@ const WishlistItem = ({ item }) => {
                     fontWeight: "600"
                 }}>{item.price.discount} off</p>
             </div>
-
-            <Remove onClick={()=>{removeItem(item.id)}}>
+        </div>
+        <Remove onClick={()=>{removeItem(item.id)}}>
                 <IconButton  size="large">
                     <DeleteOutlineIcon fontSize="inherit" style={{color:"#2874f0"}}/>
-                </IconButton>
+              </IconButton>
+              <h5>Qnt:{item.quantity}&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;</h5>
                 </Remove>
-
-        </div>
     </div>
 
 }

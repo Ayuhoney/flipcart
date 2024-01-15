@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 
 export const Wishlist = () => {
+    
     const navigator = useNavigate();
     var sum = 0;
     var discount = 0;
@@ -34,6 +35,7 @@ for (var i = 0; i < wishlistIteams.length; i++) {
 
     if(!localStorage.getItem("userName")){
         navigator("/login")
+        return;
     }
 
         try{

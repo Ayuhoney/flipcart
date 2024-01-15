@@ -73,9 +73,10 @@ export const DetailsPage = () => {
 
     const buyProduct = async () => {
 
-        if (!localStorage.getItem("userName")) {
-            navigator("/login")
-        }
+         if(!localStorage.getItem("userName")){
+        navigator("/login")
+        return;
+    }
 
         try {
             const config = {
@@ -98,13 +99,13 @@ export const DetailsPage = () => {
 
 
             var options = {
-                "key": key, // Enter the Key ID generated from the Dashboard
-                "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                "key": key,
+                "amount": order.amount, // 50000 refers to 50000 paise
                 "currency": "INR",
                 "name": "Ayush Sharma",
                 "description": "Flipkart Clone Test Transaction",
 
-                "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                "order_id": order.id, 
                 "handler": async function (response) {
 
                     const config = {
@@ -115,29 +116,30 @@ export const DetailsPage = () => {
                     const razorpay_payment_id = (response.razorpay_payment_id);
                     const razorpay_order_id = (response.razorpay_order_id);
                     const razorpay_signature = (response.razorpay_signature)
+
                     try {
-                        const data = await axios.post("http://localhost:8080/paymentVerification", {
+
+                        const { data } = await axios.post("http://localhost:8080/paymentVerification", {
                             razorpay_order_id,
                             razorpay_payment_id,
                             razorpay_signature,
                             product,
                             userName,
-                        }, config)
-                     
-                        navigator("/orders");
-
-
+                        }, config);
+                    
+                        if (data.success) {
+                            alert("Payment successful!");
+                            navigator("/orders");
+                        } else {
+                        }
+                    } catch (error) {
+                        console.error("Error during payment verification:", error);
                     }
-                    catch (e) {
-
-                    }
-
-
                 },
                 "prefill": {
-                    "name": "Gaurav Kumar",
-                    "email": "gaurav.kumar@example.com",
-                    "contact": "9000090000"
+                    "name": "Ayush Sharma",
+                    "email": "AyushSharma@example.com",
+                    "contact": "8382823058"
                 },
                 "notes": {
                     "address": "Razorpay Corporate Office"
@@ -152,8 +154,6 @@ export const DetailsPage = () => {
                 alert("payment failed, try again")
             });
             razor.open();
-           
-
         }
 
 

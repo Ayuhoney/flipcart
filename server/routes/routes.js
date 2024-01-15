@@ -29,41 +29,33 @@ router.post("/placeOrders", placeOrders)
 router.post("/orderHistory", orders)
 
 router.post("/paymentVerification", async (req, res) => {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, product, userName } = req.body;
     
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, product, userName } = req.body;
 
-    const sha = crypto.createHmac("sha256", apiSecret)
-    sha.update(`${razorpay_order_id}|${razorpay_payment_id}`)
+    const sha = crypto.createHmac("sha256", apiSecret);
+    sha.update(`${razorpay_order_id}|${razorpay_payment_id}`);
     const digest = sha.digest("hex");
 
     const date = new Date()
     product.purchasedDate = date;
-    if (digest == razorpay_signature) {
 
-        const data = await Order.findOne({ username:userName });
-        console.log(data);
-      
-        
-        if (!data) {
+    if (digest === razorpay_signature) {
+        const order = await Order.findOne({ username: userName });
 
-            const data = new Order({ username: userName, orders: [product] })
-            await data.save();
-            res.status(200).json({ msg: "order completed successfully! last stage" })
-        }
-        else {
-            // retrieve it and push items
-            data.orders.push(product)
-            await data.save();
-            console.log("product added");
-
+        if (!order) {
+            const newOrder = new Order({ username: userName, orders: [product] });
+            await newOrder.save();
+            res.status(200).json({ success: true, msg: "Order completed successfully! Last stage" });
+        } else {
+            order.orders.push(product);
+            await order.save();
+            console.log("Product added to existing order");
+            res.status(200).json({ success: true, msg: "Product added to existing order" });
         }
     } else {
-        res.status(501).json({ msg: "Transaction is not legit" })
+        res.status(501).json({ success: false, msg: "Transaction is not legit" });
     }
-
-
-
-})
+});
 
 
 router.get("/getKey", (req, res) => {
