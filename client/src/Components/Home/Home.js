@@ -20,10 +20,6 @@ const Home = () => {
     }, [dispatch])
 
     
-
-
-
-
     return (<div>
         
         <Header />
@@ -33,8 +29,7 @@ const Home = () => {
         <ImageBanner/>
         <ProductContainer fetchproducts={allProductsDict} />
         <ProductContainer fetchproducts={allProductsDict} />
-
-
+        
     </div>)
 }
 export default Home;    

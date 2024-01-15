@@ -37,56 +37,55 @@ const InputSearchBase = styled(InputBase)`
   width: 150%;
   padding-left: 20px;
 `;
-
 const Search = () => {
-    const [text, setText] = useState("");
-    const [open, setOpen] = useState(true);
-  
-    const getText = (text) => {
-      setText(text);
-      setOpen(false);
-    };
-  
-    const getProducts = useSelector((state) => state.getProducts);
-    const { products } = getProducts;
-  
-    const dispatch = useDispatch();
-  
-    useEffect(() => {
-      dispatch(listProducts());
-    }, [dispatch]);
-  
-    return (
-      <SearchContainer>
-        <InputSearchBase
-          placeholder="Search for products, brands and more"
-          inputProps={{ "aria-label": "search" }}
-          onChange={(e) => getText(e.target.value)}
-        />
-        <SearchIconWrapper>
-          <SearchIcon />
-        </SearchIconWrapper>
-        
-        {text && (
-          <ListWrapper hidden={open}>
-            {Array.from(new Set(products.map((product) => product.title.longTitle.toLowerCase())))
-              .filter((title) => title.includes(text.toLowerCase()))
-              .map((title, index) => (
-                <ListItem key={index}>
-                
-                  <Link
-                    to={`/product/${products.find((product) => product.title.longTitle.toLowerCase() === title).id}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                    onClick={() => setOpen(true)}
-                  >
-                    {title}
-                  </Link>
-                </ListItem>
-              ))}
-          </ListWrapper>
-        )}
-      </SearchContainer>
-    );
+  const [text, setText] = useState("");
+  const [open, setOpen] = useState(true);
+
+  const getText = (text) => {
+    setText(text);
+    setOpen(false);
   };
-  
-  export default Search;
+
+  const getProducts = useSelector((state) => state.getProducts);
+  const { products } = getProducts;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(listProducts());
+  }, [dispatch]);
+
+  return (
+    <SearchContainer>
+      <InputSearchBase
+        placeholder="Search for products, brands and more"
+        inputProps={{ "aria-label": "search" }}
+        onChange={(e) => getText(e.target.value)}
+      />
+      <SearchIconWrapper>
+        <SearchIcon />
+      </SearchIconWrapper>
+      
+      {text && (
+        <ListWrapper hidden={open}>
+          {products
+            .filter((product) => product.title.longTitle.toLowerCase().includes(text.toLowerCase()))
+            .map((product, index) => (
+              <ListItem key={index}>
+                <Link
+                  to={`/product/${product.id}`}
+                  style={{ textDecoration: "none", color: "inherit", display: 'flex', alignItems: 'center' }}
+                  onClick={() => setOpen(true)}
+                >
+                  <img src={product.url} alt={product.title.longTitle} style={{ width: '40px', height: '40px', marginRight: '10px' }} />
+                  {product.title.longTitle}
+                </Link>
+              </ListItem>
+            ))}
+        </ListWrapper>
+      )}
+    </SearchContainer>
+  );
+};
+
+export default Search;
