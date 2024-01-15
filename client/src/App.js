@@ -11,6 +11,8 @@ import { Cart } from "./Components/Cart/Cart.js";
 import OrderHistory from "./Components/OrderHistory/OrderHistory.js";
 import Footer from "./Components/Footer/Footer.jsx"
 import { Wishlist } from './Components/Wishlist/Wishlist.js'
+import { Checkout } from "./Components/Checkout/Checkout.js";
+
 
 function App() {
   return (
@@ -26,6 +28,7 @@ function App() {
     <Route path='/cart' element={ <Cart/> }  />
     <Route path='/wishlist' element={ <Wishlist/> }  />
     <Route path='/orders' element={ <OrderHistory/> }  />
+    <Route path='/checkout' element={ <Checkout/> }  />
     </Routes>
     </Provider>
     <Footer/>

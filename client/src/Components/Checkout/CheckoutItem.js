@@ -1,15 +1,16 @@
-import { ButtonGroup } from "@mui/material";
+import { AppBar, ButtonGroup } from "@mui/material";
 import { Button, styled } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { addEllipsis } from "../../utils/commonUtils";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteFromCart } from "../../Redux/Actions/WishActions";
+import { incrementQuantity, decrementQuantity, deleteFromCart } from "../../Redux/Actions/checkoutAction";
 import { useEffect } from "react";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import {Link} from 'react-router-dom'
+import {Link }from 'react-router-dom'
 
 const Remove = styled(Button)(({ theme }) => ({
     fontSize: '16px',
+    display: 'flex',
     marginTop: '9%',
     [theme.breakpoints.down('sm')]: {
         marginTop: '-7%'
@@ -19,10 +20,13 @@ const Remove = styled(Button)(({ theme }) => ({
     }
 }));
 
+const Component = styled(ButtonGroup)`
+    margin-top: 30px;
+`;
 
-const WishlistItem = ({ item }) => {
-
-    const cart = useSelector(state => state.wishlist);
+export const CheckoutIteam = ({ item }) => {
+    
+    const cart = useSelector(state => state.checkout);
     const selectedItem = cart.find(cartItem => cartItem.id === item.id);
     const dispatch = useDispatch();
 
@@ -34,14 +38,32 @@ const WishlistItem = ({ item }) => {
         dispatch(deleteFromCart(id));
     };
 
+    const incrementItemQuantity = (id) => {
+        dispatch(incrementQuantity(id, selectedItem.quantity + 1));
+    };
 
-    return <div className="cart-item-container">
+    const decrementItemQuantity = (id) => {
+        if (selectedItem.quantity > 1) {
+            dispatch(decrementQuantity(id, selectedItem.quantity - 1));
+        }
+    };
+
+    
+    return( 
+
+        <div className="cart-item-container">
         <div className="img-button-container" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }} >
-            <Link to={`/product/${selectedItem.id}`}>
+             
+             <Link to={`/product/${item.id}`}>
             <img className="cart-image-container" src={item.url} alt="" />
             </Link>
             <br />
 
+            <Component>
+                <Button onClick={() => decrementItemQuantity(item.id)} style={{ border: 'none' }} variant="contained" color="success">-</Button>
+                <Button style={{ border: 'none' }}>{selectedItem ? selectedItem.quantity : 0}</Button>
+                <Button onClick={() => incrementItemQuantity(item.id)} style={{ border: 'none' }} variant="contained" color="error">+</Button>
+            </Component>
 
         </div>
 
@@ -86,15 +108,15 @@ const WishlistItem = ({ item }) => {
                     fontWeight: "600"
                 }}>{item.price.discount} off</p>
             </div>
-        </div>
-        <Remove onClick={()=>{removeItem(item.id)}}>
+
+            <Remove onClick={()=>{removeItem(item.id)}}>
                 <IconButton  size="large">
                     <DeleteOutlineIcon fontSize="inherit" style={{color:"#2874f0"}}/>
-              </IconButton>
-              <h5>Qnt:{item.quantity}&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;</h5>
+                </IconButton>
                 </Remove>
+
+        </div>
     </div>
+    )
 
 }
-
-export default WishlistItem;

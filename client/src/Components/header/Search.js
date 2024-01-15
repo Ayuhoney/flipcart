@@ -83,6 +83,7 @@ const Search = () => {
               </ListItem>
             ))}
         </ListWrapper>
+        
       )}
     </SearchContainer>
   );

@@ -2,39 +2,40 @@ import React, { useEffect, useState } from "react";
 import { Button, Grid } from "@mui/material";
 import { useSelector } from "react-redux";
 import "../styles.css";
-import { CartItem } from "./CartItem";
+import { CheckoutIteam } from "./CheckoutItem";
 import Table from "@mui/material/Table";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import EmptyCart from "./EmptyCart";
+import EmptyCart from "./EmptyCheckout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 
-export const Cart = () => {
+export const Checkout = () => {
 
     const navigator = useNavigate();
     const [sum, setSum] = useState(0);
     const [discount, setDiscount] = useState(0);
     const [amount, setAmount] = useState(0);
 
-    const cartItems = useSelector((state) => state.cart);
+    const checkoutIteams = useSelector((state) => state.checkout);
 
     useEffect(() => {
         let newSum = 0;
         let newDiscount = 0;
 
-        for (var i = 0; i < cartItems.length; i++) {
-            if (cartItems[i].price && cartItems[i].price.mrp != null && cartItems[i].price.cost != null) {
-                newSum = newSum + cartItems[i].price.mrp*cartItems[i].quantity;
-                newDiscount = newDiscount + (cartItems[i].price.mrp - cartItems[i].price.cost  );
+        for (var i = 0; i < checkoutIteams.length; i++) {
+            if (checkoutIteams[i].price && checkoutIteams[i].price.mrp != null && checkoutIteams[i].price.cost != null) {
+                newSum = newSum + checkoutIteams[i].price.mrp*checkoutIteams[i].quantity;
+                newDiscount = newDiscount + (checkoutIteams[i].price.mrp - checkoutIteams[i].price.cost  );
             }
         }
 
         setSum(newSum);
         setDiscount(newDiscount);
         setAmount(newSum - newDiscount);
-    }, [cartItems]);
+    }, [checkoutIteams]);
 
     
   async function placeOrder(){
@@ -52,7 +53,7 @@ export const Cart = () => {
             }
 
             const data = {
-                cartItems,
+                checkoutIteams,
                 username: localStorage.getItem("userName")
             }
             const response = await axios.post("http://localhost:8080/placeOrder",data,config);
@@ -70,16 +71,32 @@ export const Cart = () => {
   
     return (
         <>
-            {cartItems.length ? (
+            {checkoutIteams.length ? (
                 <Grid container className="cart-container">
                     <Grid item lg={9} md={9} sm={12} xs={12}>
+
+                     
                         <div className="cart-header">
-                            <h3>My Cart ({cartItems.length})</h3>
+                            <h3>
+                                Login Id:&nbsp; 
+                                {(localStorage.getItem("userName")) ? (
+                                    <React.Fragment>
+                                        {localStorage.getItem('userName')}
+                                        <CheckCircleOutlinedIcon style={{color:'green'}}/>
+                                    </React.Fragment>
+                                ) : null}
+                            </h3>
+                        </div>
+                        <div className="cart-header">
+                        <h3>Login Id:&nbsp;{localStorage.getItem('userName')}</h3>
+                        </div>
+                        <div className="cart-header">
+                            <h3>Your Order Iteams&nbsp;({checkoutIteams.length})</h3>
                         </div>
 
                         <div className="carts-item-container">
-                            {cartItems.map((item) => {
-                                return <CartItem item={item} key={item.id} />;
+                            {checkoutIteams.map((item) => {
+                                return <CheckoutIteam item={item} key={item.id} />;
                             })}
                         </div>
 
@@ -100,7 +117,7 @@ export const Cart = () => {
                                 <TableRow>
                 <TableCell>
                     Price (
-                    {cartItems.map((item) => (
+                    {checkoutIteams.map((item) => (
                         <span key={item.id}>
                             {item.quantity} {item.quantity > 1 ? "items" : "item"}
                         </span>
@@ -128,7 +145,7 @@ export const Cart = () => {
 
                             <p style={{ color: "green", fontFamily: "inter", fontWeight: "500" }}>
                                 You will save{" "}
-                                {cartItems.reduce((totalDiscount, item) => {
+                                {checkoutIteams.reduce((totalDiscount, item) => {
                                     if (item.price && item.price.mrp != null && item.price.cost != null) {
                                         return totalDiscount + (item.price.mrp - item.price.cost);
                                     }

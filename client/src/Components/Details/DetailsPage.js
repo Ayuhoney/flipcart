@@ -10,6 +10,7 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../Redux/Actions/cartActions";
 import {addToWishilst} from '../../Redux/Actions/WishActions'
+import {addToCheckout} from '../../Redux/Actions/checkoutAction'
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
 
@@ -69,6 +70,12 @@ export const DetailsPage = () => {
         dispatch(addToWishilst(id,quantity));
         navigator("/wishlist")
     }
+
+    const addItemToCheckout = () => {
+
+        dispatch(addToCheckout(id,quantity));
+        navigator("/checkout")
+    }
     
 
     const buyProduct = async () => {
@@ -105,7 +112,7 @@ export const DetailsPage = () => {
                 "name": "Ayush Sharma",
                 "description": "Flipkart Clone Test Transaction",
 
-                "order_id": order.id, 
+                "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
                 "handler": async function (response) {
 
                     const config = {
@@ -178,8 +185,11 @@ export const DetailsPage = () => {
                             </Link>
                         <Button 
                         style={{ 
-                        marginTop:'-29%',marginLeft:'22.5%',
-                        position:"absolute"
+                        marginTop:'-30%',marginLeft:'21.8%',
+                        position:"absolute",
+                        border: "0px solid #f0f0f0",
+                        boxShadow: "0px 1px 2px 3px rgb(0 123 0 / 10%)",
+
                         }}  
                         onClick={() => {addItemToWishlist();}}
                             variant="text">
@@ -207,7 +217,7 @@ export const DetailsPage = () => {
                                 backgroundColor: "#FB641B"
                             }}
                             startIcon={<FlashOnIcon />}
-                            onClick={buyProduct}
+                            onClick={addItemToCheckout}
                         >Buy Now
                         </Button>
                         

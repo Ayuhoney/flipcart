@@ -17,6 +17,7 @@ const placeOrder = require("../controllers/placeOrder");
 const placeOrders = require("../controllers/placeOrders")
 const orders = require("../controllers/orders");
 const Order = require("../models/order-model");
+const cartOrder = require("../controllers/cartOrder ")
 // -----------------------------
 
 router.get("/fetchProducts", fetchProducts)
@@ -24,6 +25,8 @@ router.post("/signup", signUp)
 router.post("/login", logIn)
 router.post("/productDetails", fetchProductDetails)
 router.post("/buyProduct", buyProduct)
+router.post("/cartOrder",cartOrder)
+
 router.post("/placeOrder", placeOrder)
 router.post("/placeOrders", placeOrders)
 router.post("/orderHistory", orders)
