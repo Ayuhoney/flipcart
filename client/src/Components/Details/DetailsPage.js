@@ -73,6 +73,11 @@ export const DetailsPage = () => {
 
     const addItemToCheckout = () => {
 
+        if(!localStorage.getItem("userName")){
+        
+            navigator("/login")
+            return;
+        }
         dispatch(addToCheckout(id,quantity));
         navigator("/checkout")
     }

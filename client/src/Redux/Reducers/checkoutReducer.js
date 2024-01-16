@@ -1,7 +1,6 @@
 import * as cartActions from "../Constants/checkoutConstant";
 
 
-// Retrieve the cart state from local storage
 const initialState = JSON.parse(localStorage.getItem('checkout')) || [];
 
 export const checkoutReducer = (state = initialState, action) => {
@@ -11,7 +10,7 @@ export const checkoutReducer = (state = initialState, action) => {
       const existingItem = state.find(product => product.id === newItem.id);
 
       if (existingItem) {
-        // If the item with the same ID already exists, update the quantity
+
         return state.map(product =>
           product.id === existingItem.id
             ? { ...product, quantity: product.quantity + newItem.quantity }

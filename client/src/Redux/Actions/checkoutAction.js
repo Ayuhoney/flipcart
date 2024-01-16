@@ -49,9 +49,13 @@ export const updateCartItemTotalPrice = (id, newTotalPrice) => ({
       newTotalPrice,
   },
 });
-export const updateAllItemCosts = (updatedItems) => {
-  return {
-      type:actionType.UPDATE_ALL_ITEM_COSTS ,
-      payload: updatedItems,
-  };
-};
+
+export const updateAllItemCosts = (updatedItems) => ({
+  type: actionType.UPDATE_ALL_ITEM_COSTS,
+  payload: updatedItems,
+});
+
+export const addDeliveryAddress = (address) => ({
+  type: actionType.ADD_DELIVERY_ADDRESS,
+  payload: address,
+});

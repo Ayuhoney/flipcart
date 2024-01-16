@@ -12,6 +12,7 @@ import axios from "axios";
 import { useNavigate,Link } from "react-router-dom";
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import {Box,TextField, Typography,styled, AppBar } from '@mui/material';
+import {addDeliveryAddress} from '../../Redux/Actions/checkoutAction'
 
 
 
@@ -26,7 +27,7 @@ const DeliveryAddress = {
 };
 const LoginButton = styled(Button)`
     display: flex;
-    margin-left: 96vh;
+    margin-left: 86%;
     background: #fb641b;
     color: #fff;
     border-radius: 2px;
@@ -82,6 +83,7 @@ const Components = styled(Link)`
 `;
 
 export const Checkout = () => {
+
      const logoURL ="https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/flipkart-plus_8d85f4.png";
     const subURL  ="https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/plus_aef861.png";
 
@@ -110,35 +112,11 @@ export const Checkout = () => {
     }, [checkoutIteams]);
 
     
-  async function placeOrder(){
+    // if(!localStorage.getItem("userName")){
+    //     navigator("/login")
+    //     return;
+    // }
 
-    if(!localStorage.getItem("userName")){
-        navigator("/login")
-        return;
-    }
-
-        try{
-            const config = {
-                headers:{
-                    "content-type":"application/json",
-                },
-            }
-
-            const data = {
-                checkoutIteams,
-                username: localStorage.getItem("userName")
-            }
-            const response = await axios.post("http://localhost:8080/placeOrder",data,config);
-            console.log(response.data.msg);
-           
-            navigator("/orders")
-            window.location.reload();
-            localStorage.removeItem("cart")
-        }
-        catch(e){
-            console.log(`error ${e}`);
-        }
-    }
 
     const [expanded, setExpanded] = useState(false);
       
@@ -151,9 +129,142 @@ export const Checkout = () => {
         setSignup({ ...signup, [e.target.name]: e.target.value });
     }
 
-    const submitAddress = () => {
-
+    const submitAddress = () => {  
+        dispatch(addDeliveryAddress(signup))
       };
+       
+
+      const userName = localStorage.getItem("userName");
+      const date = new Date();
+      const [quantity, setQuantity] = useState(1);
+      
+      const [product, setPoduct] = useState();
+  
+      //    fetching data from backend-----
+      useEffect(() => {
+  
+          window.scrollTo(0, 0);
+  
+          const data = async () => {
+  
+              const config = {
+                  headers: {
+                      "content-type": "application/json",
+                  }
+              }
+  
+
+              const data = {
+                id: checkoutIteams[0].id
+              };
+                
+              try {
+                  const response = await axios.post("http://localhost:8080/productDetails",data, config);
+  
+                  setPoduct(response.data.productDetails);
+  
+  
+              }
+              catch (e) {
+  
+                  console.log(`${e} : while making post request`);
+              }
+          }
+  
+          data();
+      }, [])
+  
+
+      const buyProduct = async () => {
+
+        if(!localStorage.getItem("userName")){
+       navigator("/login")
+       return;
+   }
+
+       try {
+           const config = {
+               headers: {
+                   "content-type": "application/json",
+               }
+           }
+
+           const orderData = {
+               username: userName,
+               product: product,
+
+           }
+
+           const { data: { key } } = await axios.get("http://localhost:8080/getKey");
+
+           const { data } = await axios.post("http://localhost:8080/buyProduct", orderData, config);
+           const order = data.order;
+
+
+
+           var options = {
+               "key": key,
+               "amount": order.amount, // 50000 refers to 50000 paise
+               "currency": "INR",
+               "name": "Ayush Sharma",
+               "description": "Flipkart Clone Test Transaction",
+
+               "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+               "handler": async function (response) {
+
+                   const config = {
+                       headers: {
+                           "content-type": "application/json"
+                       }
+                   }
+                   const razorpay_payment_id = (response.razorpay_payment_id);
+                   const razorpay_order_id = (response.razorpay_order_id);
+                   const razorpay_signature = (response.razorpay_signature)
+
+                   try {
+
+                       const { data } = await axios.post("http://localhost:8080/paymentVerification", {
+                           razorpay_order_id,
+                           razorpay_payment_id,
+                           razorpay_signature,
+                           product,
+                           userName,
+                       }, config);
+                   
+                       if (data.success) {
+                           alert("Payment successful!");
+                           navigator("/orders");
+                       } else {
+                       }
+                   } catch (error) {
+                       console.error("Error during payment verification:", error);
+                   }
+               },
+               "prefill": {
+                   "name": "Ayush Sharma",
+                   "email": "AyushSharma@example.com",
+                   "contact": "8382823058"
+               },
+               "notes": {
+                   "address": "Razorpay Corporate Office"
+               },
+               "theme": {
+                   "color": "#3399cc"
+               }
+           };
+
+           const razor = new window.Razorpay(options);
+           razor.on('payment.failed', function (response) {
+               alert("payment failed, try again")
+           });
+           razor.open();
+       }
+
+
+       catch (e) {
+           console.log(e);
+       }
+   }
    
   
     return (
@@ -224,7 +335,7 @@ export const Checkout = () => {
                         </div>
 
                         <div className="place-order-container">
-                            <Button onClick={placeOrder} style={{ textTransform: "capitalize" }} disableElevation variant="contained">
+                            <Button onClick={buyProduct} style={{ textTransform: "capitalize" }} disableElevation variant="contained">
                                 Place Order
                             </Button>
                         </div>
